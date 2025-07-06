@@ -1,0 +1,11 @@
+[package]
+name = "shinden-pl-api-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.98"
+cookie_store = "0.21.1"
+reqwest = "0.12.22"
+reqwest_cookie_store = "0.8.0"
+serde = { version = "1.0.219", features = ["derive"]}
