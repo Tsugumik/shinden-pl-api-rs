@@ -1329,7 +1329,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "shinden-pl-api-rs"
+name = "shinden-pl-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",

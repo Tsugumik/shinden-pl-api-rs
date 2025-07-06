@@ -1,8 +1,8 @@
 pub mod client;
 pub mod models;
-mod search;
-mod episodes;
-mod player;
-mod user;
-mod video;
+pub mod search;
+pub mod episodes;
+pub mod player;
+pub mod user;
+pub mod video;
 
