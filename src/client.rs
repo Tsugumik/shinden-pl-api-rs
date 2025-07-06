@@ -1,13 +1,13 @@
-use reqwest::{Client, header::HeaderMap};
+use crate::headers::{get_headers_for_type, RequestType};
+use anyhow::{Context, Result};
+use cookie_store::serde;
 use cookie_store::CookieStore;
+use reqwest::Client;
 use reqwest_cookie_store::CookieStoreMutex;
-use std::fs::{File, create_dir_all};
+use std::fs::{create_dir_all, File};
 use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 use std::sync::Arc;
-use anyhow::{Context, Result};
-use cookie_store::serde;
-use reqwest::header::{HeaderValue, ACCEPT, USER_AGENT, ACCEPT_ENCODING, CONNECTION, CONTENT_TYPE};
 
 #[derive(Clone)]
 
@@ -28,17 +28,12 @@ impl ShindenAPI {
         let store = load_cookies(&cookie_path)?;
         let jar = Arc::new(CookieStoreMutex::new(store));
 
-        let mut default_headers = HeaderMap::new();
-        default_headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/x-www-form-urlencoded")); // To jest ważne dla POST
-        default_headers.insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip, deflate, br"));
-        default_headers.insert(CONNECTION, HeaderValue::from_static("keep-alive"));
-        default_headers.insert(USER_AGENT, HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.51"));
-        default_headers.insert(ACCEPT, HeaderValue::from_static("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"));
-
         let client = Client::builder()
             .cookie_provider(jar.clone())
             .redirect(reqwest::redirect::Policy::default())
-            .default_headers(default_headers)
+            .gzip(true)
+            .deflate(true)
+            .brotli(true)
             .build()?;
 
         Ok(Self {
@@ -49,28 +44,35 @@ impl ShindenAPI {
     }
 
     pub async fn get_html(&self, url: &str) -> Result<String> {
-        let response = self.client.get(url).send().await?;
+        let headers = get_headers_for_type(RequestType::Frontend, Some(url))?;
+        let response = self.client.get(url)
+            .headers(headers)
+            .send()
+            .await?
+            .error_for_status()?;
+
         let body = response.text().await?;
+
         save_cookies(&self.jar.lock().unwrap(), &self.cookie_path)?;
         Ok(body)
     }
 
-    pub async fn post_form(
-        &self,
-        url: &str,
-        form: &[(String, String)],
-        headers: Option<HeaderMap>,
-    ) -> Result<String> {
-        let mut req = self.client.post(url).form(form);
+    pub async fn post_form(&self, url: &str, form: &[(String, String)], custom_headers: Option<reqwest::header::HeaderMap>) -> Result<String> {
+        let mut headers = get_headers_for_type(RequestType::Login, Some(url))?;
 
-        if let Some(h) = headers {
-            req = req.headers(h);
+        if let Some(ch) = custom_headers {
+            headers.extend(ch);
         }
 
-        let response = req.send().await?;
+        let response = self.client.post(url)
+            .form(form)
+            .headers(headers)
+            .send()
+            .await?
+            .error_for_status()?;
+
         let body = response.text().await?;
         save_cookies(&self.jar.lock().unwrap(), &self.cookie_path)?;
-
         Ok(body)
     }
 }
