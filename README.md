@@ -11,6 +11,22 @@ all while leveraging Rust's performance and safety guarantees.
 - Player Retrieval: Obtains data about available video players for a given episode (e.g., Mega.nz, CDA.pl iframes).
 - Cookie Management: Persistently stores and manages session cookies.
 
+## Getting Started
+
+To use this library in your Rust project, add it as a dependency in your Cargo.toml file:
+
+```toml
+[dependencies]
+shinden-pl-api = "0.1.0" # Użyj najnowszej wersji dostępnej na crates.io
+```
+
+Alternatively, you can add it directly via the Cargo CLI:
+Bash
+
+```sh
+cargo add shinden-pl-api
+```
+
 ## Usage
 Here's an example of how to use the library to log in, fetch an episode list for a series, and extract a player link for the first episode.
 ```rust
