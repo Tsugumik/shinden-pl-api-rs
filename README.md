@@ -17,7 +17,7 @@ To use this library in your Rust project, add it as a dependency in your Cargo.t
 
 ```toml
 [dependencies]
-shinden-pl-api = "0.1.0" # Użyj najnowszej wersji dostępnej na crates.io
+shinden-pl-api = "0.1.0"
 ```
 
 Alternatively, you can add it directly via the Cargo CLI:
