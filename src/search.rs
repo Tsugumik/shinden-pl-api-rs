@@ -1,10 +1,12 @@
 use crate::{client::ShindenAPI, models::Anime};
-use scraper::{Html, Selector};
 use anyhow::Result;
-
+use scraper::{Html, Selector};
 
 pub async fn search_anime(client: &ShindenAPI, name: &str) -> Result<Vec<Anime>> {
-    let search_url = format!("https://shinden.pl/series?search={}", name.replace(' ', "+"));
+    let search_url = format!(
+        "https://shinden.pl/series?search={}",
+        name.replace(' ', "+")
+    );
     let html = client.get_html(&search_url).await?;
 
     let doc = Html::parse_document(&html);
@@ -19,19 +21,39 @@ pub async fn search_anime(client: &ShindenAPI, name: &str) -> Result<Vec<Anime>>
     let mut result = Vec::new();
 
     for div in doc.select(&div_row) {
-        let name_elem = div.select(&h3).next()
-            .and_then(|h| h.select(&a).next());
-        let name = name_elem.map(|el| el.text().collect::<String>()).unwrap_or_default();
-        let url = name_elem.and_then(|el| el.value().attr("href")).unwrap_or("").to_string();
-        let img_href = div.select(&cover).next()
+        let name_elem = div.select(&h3).next().and_then(|h| h.select(&a).next());
+        let name = name_elem
+            .map(|el| el.text().collect::<String>())
+            .unwrap_or_default();
+        let url = name_elem
+            .and_then(|el| el.value().attr("href"))
+            .unwrap_or("")
+            .to_string();
+        let img_href = div
+            .select(&cover)
+            .next()
             .and_then(|el| el.value().attr("href"))
             .unwrap_or("/res/other/placeholders/title/100x100.jpg");
 
         let full_url = format!("https://shinden.pl{}", url);
         let img_url = format!("https://shinden.pl{}", img_href);
-        let anime_type = div.select(&kind).next().map(|k| k.text().collect::<String>()).unwrap_or_default();
-        let ep_count = div.select(&episodes).next().map(|e| e.text().collect::<String>()).unwrap_or_default().trim().to_string();
-        let rate = div.select(&rating).next().map(|r| r.text().collect::<String>()).unwrap_or_default();
+        let anime_type = div
+            .select(&kind)
+            .next()
+            .map(|k| k.text().collect::<String>())
+            .unwrap_or_default();
+        let ep_count = div
+            .select(&episodes)
+            .next()
+            .map(|e| e.text().collect::<String>())
+            .unwrap_or_default()
+            .trim()
+            .to_string();
+        let rate = div
+            .select(&rating)
+            .next()
+            .map(|r| r.text().collect::<String>())
+            .unwrap_or_default();
 
         if !name.is_empty() {
             result.push(Anime {

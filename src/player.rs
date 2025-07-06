@@ -1,7 +1,6 @@
-
 use crate::{client::ShindenAPI, models::Player};
-use scraper::{Html, Selector};
 use anyhow::Result;
+use scraper::{Html, Selector};
 use serde_json::Value;
 
 pub async fn get_players(client: &ShindenAPI, episode_link: &str) -> Result<Vec<Player>> {

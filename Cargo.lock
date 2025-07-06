@@ -1170,6 +1170,8 @@ dependencies = [
  "bytes",
  "cookie_store",
  "reqwest",
+ "serde",
+ "serde_derive",
  "url",
 ]
 

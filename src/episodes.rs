@@ -1,7 +1,6 @@
-
 use crate::{client::ShindenAPI, models::Episode};
-use scraper::{Html, Selector};
 use anyhow::Result;
+use scraper::{Html, Selector};
 
 pub async fn get_episodes(client: &ShindenAPI, link: &str) -> Result<Vec<Episode>> {
     let url = format!("{}/all-episodes", link);
