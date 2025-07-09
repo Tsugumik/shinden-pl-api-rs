@@ -2,6 +2,7 @@ use crate::client::ShindenAPI;
 use anyhow::Result;
 use reqwest::header::{HeaderMap, HeaderValue};
 use scraper::{Html, Selector};
+use crate::headers::get_headers_for_type;
 
 impl ShindenAPI {
     pub async fn login(&self, email: &str, password: &str) -> Result<()> {
@@ -19,6 +20,12 @@ impl ShindenAPI {
 
         self.post_form(url, &form, Some(post_specific_headers)).await?;
 
+        Ok(())
+    }
+
+    pub async fn logout(&self) -> Result<()> {
+        let url = "https://shinden.pl/main/logout";
+        self.get_html(url).await?;
         Ok(())
     }
 
