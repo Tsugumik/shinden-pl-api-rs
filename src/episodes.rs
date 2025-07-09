@@ -10,7 +10,7 @@ impl ShindenAPI {
         let html = self.get_html(&url).await?;
         let doc = Html::parse_document(&html);
 
-        let tbody_selector = Selector::parse("tbody").unwrap();
+        let tbody_selector = Selector::parse("tbody.list-episode-checkboxes").unwrap();
         let tbody_element = doc.select(&tbody_selector)
             .next()
             .context("Could not find tbody element on the page")?;
