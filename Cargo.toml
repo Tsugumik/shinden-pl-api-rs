@@ -1,6 +1,6 @@
 [package]
 name = "shinden-pl-api"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Błażej Drozd"]
 edition = "2024"
 
