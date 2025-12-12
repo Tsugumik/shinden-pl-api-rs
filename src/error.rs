@@ -19,4 +19,7 @@ pub enum ShindenError {
 
     #[error("System config error: {0}")]
     Config(String),
+
+    #[error("HTML parsing error: {0}")]
+    HtmlError(String)
 }
