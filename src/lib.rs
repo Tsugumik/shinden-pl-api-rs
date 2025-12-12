@@ -1,2 +1,6 @@
 pub mod headers;
-mod error;
+pub mod error;
+pub mod client;
+pub mod utils;
+pub mod auth;
+pub mod user;
