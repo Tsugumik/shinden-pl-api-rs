@@ -6,7 +6,7 @@ use crate::error::ShindenError;
 
 pub fn resolve_default_path() -> Result<PathBuf, ShindenError> {
     let mut path = dirs::data_local_dir()
-        .ok_or_else(|| ShindenError::Config("Could not determine local data directory".into()))?;
+        .ok_or_else(|| ShindenError::Config("Could not determine local data directory".to_string()))?;
 
     path.push("shinden_api");
 
