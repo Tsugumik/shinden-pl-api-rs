@@ -4,3 +4,4 @@ pub mod client;
 pub mod utils;
 pub mod auth;
 pub mod user;
+pub mod models;
