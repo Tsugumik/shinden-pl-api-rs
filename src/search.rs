@@ -1,7 +1,31 @@
+use reqwest::Url;
 use scraper::{ElementRef, Html, Selector};
+use crate::client::ShindenHttpClient;
 use crate::error::ShindenError;
+use crate::headers::RequestType;
 use crate::models::{SearchAnimeItem, SearchPageResult, SearchRatings};
 use crate::utils::{extract_f64_after_colon, get_attr_from_selector, get_text_from_selector, get_u32_param_from_url, parse_f64_from_comma_str, parse_u32_from_str};
+
+pub async fn search_anime(
+    client: &ShindenHttpClient,
+    query: &str,
+    page: u32
+) -> Result<SearchPageResult, ShindenError> {
+    let mut url = Url::parse("https://shinden.pl/series")
+        .map_err(|e| ShindenError::Config(e.to_string()))?;
+
+    {
+        let mut query_pairs = url.query_pairs_mut();
+        query_pairs.append_pair("search", query);
+        
+        if page > 1 {
+            query_pairs.append_pair("page", &page.to_string());
+        }
+    }
+
+    let html = client.get_html(url.as_str(), RequestType::Frontend).await?;
+    parse_search_html(&html)
+}
 
 fn parse_search_html(html: &str) -> Result<SearchPageResult, ShindenError> {
     let doc = Html::parse_document(html);
