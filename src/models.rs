@@ -12,7 +12,7 @@ pub struct SearchAnimeItem {
     pub url: String,
     pub image_url: String,
     pub anime_type: String,
-    pub episode_count: Option<u32>,
+    pub episodes_count: Option<u32>,
     pub status: String,
     pub top_score: Option<f64>,
     pub search_ratings: Option<SearchRatings>,
