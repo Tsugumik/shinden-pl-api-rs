@@ -79,7 +79,7 @@ pub fn get_u32_param_from_url(href: &str, param_name: &str) -> Option<u32> {
         return None;
     }
 
-    let fake_url = match Url::parse(&format!("http://dummy{}", href)) {
+    let fake_url = match Url::parse(&format!("https://dummy{}", href)) {
         Ok(u) => u,
         Err(_) => return None,
     };
