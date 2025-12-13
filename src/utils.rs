@@ -55,3 +55,14 @@ pub fn parse_u32_from_str(text: &str) -> Option<u32> {
     let clean: String = text.chars().filter(|c| c.is_ascii_digit()).collect();
     clean.parse::<u32>().ok()
 }
+
+pub fn extract_f64_after_colon(parent: &ElementRef, sel: &Selector) -> f64 {
+    let text = get_text_from_selector(parent, sel);
+
+    if let Some(idx) = text.find(':') {
+        let val_part = &text[idx+1..].trim();
+        return parse_f64_from_comma_str(val_part).unwrap_or(0.0);
+    }
+
+    parse_f64_from_comma_str(&text).unwrap_or(0.0)
+}
