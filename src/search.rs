@@ -6,6 +6,17 @@ use crate::headers::RequestType;
 use crate::models::{SearchAnimeItem, SearchPageResult, SearchRatings};
 use crate::utils::{extract_f64_after_colon, get_attr_from_selector, get_text_from_selector, get_u32_param_from_url, parse_f64_from_comma_str, parse_u32_from_str};
 
+/// Searches for anime series on Shinden.pl.
+///
+/// # Arguments
+///
+/// * `client` - The `ShindenHttpClient` instance used to perform the request.
+/// * `query` - The search phrase (e.g., "Hunter x Hunter").
+/// * `page` - The page number to fetch (starts from 1).
+/// # Returns
+///
+/// Returns a `Result` containing `SearchPageResult` with the list of anime and pagination info,
+/// or a `ShindenError` if the request or parsing fails.
 pub async fn search_anime(
     client: &ShindenHttpClient,
     query: &str,
@@ -27,6 +38,7 @@ pub async fn search_anime(
     parse_search_html(&html)
 }
 
+/// Internal function to parse the raw HTML of the search results page.
 fn parse_search_html(html: &str) -> Result<SearchPageResult, ShindenError> {
     let doc = Html::parse_document(html);
 
