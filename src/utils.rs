@@ -2,8 +2,8 @@ use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
+use reqwest::Url;
 use scraper::{ElementRef, Selector};
-use scraper::node::Text;
 use crate::error::ShindenError;
 
 pub fn resolve_default_path() -> Result<PathBuf, ShindenError> {
@@ -39,10 +39,10 @@ pub fn get_text_from_selector(parent: &ElementRef, sel: &Selector) -> String {
         .unwrap_or_default()
 }
 
-pub fn get_attr_from_selector(parent: &ElementRef, sel: &Selector, attr: &str) -> std::string::String {
+pub fn get_attr_from_selector(parent: &ElementRef, sel: &Selector, attr: &str) -> String {
     match parent.select(sel).next() {
         Some(el) => el.value().attr(attr).unwrap_or("").to_string(),
-        None => std::string::String::new(),
+        None => String::new(),
     }
 }
 
@@ -72,4 +72,20 @@ pub fn extract_f64_after_colon(parent: &ElementRef, sel: &Selector) -> f64 {
     }
 
     parse_f64_from_comma_str(&text).unwrap_or(0.0)
+}
+
+pub fn get_u32_param_from_url(href: &str, param_name: &str) -> Option<u32> {
+    if href.is_empty() {
+        return None;
+    }
+
+    let fake_url = match Url::parse(&format!("http://dummy{}", href)) {
+        Ok(u) => u,
+        Err(_) => return None,
+    };
+
+    match fake_url.query_pairs().find(|(k, _)| k == param_name) {
+        Some((_, v)) => v.parse::<u32>().ok(),
+        None => None,
+    }
 }
