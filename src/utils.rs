@@ -39,6 +39,13 @@ pub fn get_text_from_selector(parent: &ElementRef, sel: &Selector) -> String {
         .unwrap_or_default()
 }
 
+pub fn get_attr_from_selector(parent: &ElementRef, sel: &Selector, attr: &str) -> std::string::String {
+    match parent.select(sel).next() {
+        Some(el) => el.value().attr(attr).unwrap_or("").to_string(),
+        None => std::string::String::new(),
+    }
+}
+
 pub fn parse_f64_from_comma_str(text: &str) -> Option<f64> {
     if text.is_empty() || text == "-" {
         return None;
