@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct SearchPageResult {
     pub current_page: u32,
     pub total_pages: u32,
+    pub anime_list: Vec<SearchAnimeItem>
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -54,7 +55,7 @@ pub struct AnimeDetails {
 
     pub genres: Vec<String>,
     pub target_groups: Vec<String>,
-    pub others_tags: Vec<String>,
+    pub other_tags: Vec<String>,
     pub character_types: Vec<String>,
     pub place_and_time: Vec<String>,
     pub source_material: String,
