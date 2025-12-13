@@ -1,8 +1,35 @@
-use reqwest::Url;
 use scraper::{ElementRef, Html, Selector};
 use crate::error::ShindenError;
 use crate::models::{SearchAnimeItem, SearchPageResult, SearchRatings};
 use crate::utils::{extract_f64_after_colon, get_attr_from_selector, get_text_from_selector, get_u32_param_from_url, parse_f64_from_comma_str, parse_u32_from_str};
+
+fn parse_search_html(html: &str) -> Result<SearchPageResult, ShindenError> {
+    let doc = Html::parse_document(html);
+
+    let (current_page, total_pages) = extract_pagination(&doc)?;
+
+    let anime_list = extract_anime_list(&doc)?;
+
+    Ok(SearchPageResult {
+        current_page,
+        total_pages,
+        anime_list
+    })
+}
+
+fn extract_anime_list(doc: &Html) -> Result<Vec<SearchAnimeItem>, ShindenError> {
+    let row_sel = Selector::parse(".div-row")
+        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+    let mut list = Vec::new();
+
+    for row in doc.select(&row_sel) {
+        if let Ok(Some(item)) = parse_anime_row(&row) {
+            list.push(item);
+        }
+    }
+
+    Ok(list)
+}
 
 fn parse_anime_row(row: &ElementRef) -> Result<Option<SearchAnimeItem>, ShindenError> {
     let title_sel = Selector::parse(".desc-col h3 a")
