@@ -55,7 +55,7 @@ fn parse_search_html(html: &str) -> Result<SearchPageResult, ShindenError> {
 
 fn extract_anime_list(doc: &Html) -> Result<Vec<SearchAnimeItem>, ShindenError> {
     let row_sel = Selector::parse(".div-row")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let mut list = Vec::new();
 
     for row in doc.select(&row_sel) {
@@ -69,19 +69,19 @@ fn extract_anime_list(doc: &Html) -> Result<Vec<SearchAnimeItem>, ShindenError> 
 
 fn parse_anime_row(row: &ElementRef) -> Result<Option<SearchAnimeItem>, ShindenError> {
     let title_sel = Selector::parse(".desc-col h3 a")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let cover_sel = Selector::parse(".cover-col a")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let type_sel = Selector::parse(".title-kind-col")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let status_sel = Selector::parse(".title-status-col")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let episodes_sel = Selector::parse(".episodes-col")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let top_score_sel = Selector::parse(".rate-top")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let genres_sel = Selector::parse(".desc-col .tags li a")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     let title = get_text_from_selector(row, &title_sel);
 
@@ -134,20 +134,20 @@ fn parse_anime_row(row: &ElementRef) -> Result<Option<SearchAnimeItem>, ShindenE
 
 fn extract_ratings(row: &ElementRef) -> Result<Option<SearchRatings>, ShindenError> {
     let rate_total_sel = Selector::parse(".rating-total span")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     if row.select(&rate_total_sel).next().is_none() {
         return Ok(None);
     }
 
     let rate_story_sel = Selector::parse(".rating-story span")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let rate_graphics_sel = Selector::parse(".rating-graphics span")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let rate_music_sel = Selector::parse(".rating-music span")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let rate_chars_sel = Selector::parse(".rating-titlecahracters span")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
 
     Ok(Some(SearchRatings {
@@ -161,7 +161,7 @@ fn extract_ratings(row: &ElementRef) -> Result<Option<SearchRatings>, ShindenErr
 
 fn extract_pagination(doc: &Html) -> Result<(u32, u32), ShindenError> {
     let pagination_sel = Selector::parse(".pagination")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     let pagination_el = match doc.select(&pagination_sel).next() {
         Some(el) => el,
@@ -169,9 +169,9 @@ fn extract_pagination(doc: &Html) -> Result<(u32, u32), ShindenError> {
     };
 
     let current_page_sel = Selector::parse("li strong")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
     let last_page_sel = Selector::parse("li a[rel='last']")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     let current_txt = get_text_from_selector(&pagination_el, &current_page_sel);
     let current_page = parse_u32_from_str(&current_txt).unwrap_or(1);

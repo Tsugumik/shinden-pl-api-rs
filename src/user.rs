@@ -11,7 +11,7 @@ pub async fn get_username(client: &ShindenHttpClient) -> Result<Option<String>, 
     let doc = Html::parse_document(&html);
 
     let selector = Selector::parse("title")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     let title_element = doc.select(&selector).next();
 
@@ -42,7 +42,7 @@ pub async fn get_profile_image(client: &ShindenHttpClient) -> Result<Option<Stri
     let doc = Html::parse_document(&html);
 
     let selector = Selector::parse(".info-aside-img")
-        .map_err(|e| ShindenError::HtmlError(e.to_string()))?;
+        .map_err(|e| ShindenError::HtmlParsing(e.to_string()))?;
 
     let img = doc.select(&selector).next();
 

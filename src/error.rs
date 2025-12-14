@@ -21,5 +21,8 @@ pub enum ShindenError {
     Config(String),
 
     #[error("HTML parsing error: {0}")]
-    HtmlError(String)
+    HtmlParsing(String),
+
+    #[error("Url Safety error: {0}")]
+    UrlSafety(String)
 }
