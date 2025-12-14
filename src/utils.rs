@@ -41,8 +41,14 @@ pub fn load_cookies_from_disk(path: &Path) -> Result<cookie_store::CookieStore, 
 pub fn get_text_from_selector(parent: &ElementRef, sel: &Selector) -> String {
     parent.select(sel)
         .next()
-        .map(|el| el.text().collect::<String>().trim().to_string())
+        .map(|el| extract_text_from_element(&el))
         .unwrap_or_default()
+}
+
+/// Extracts inner text from the element.
+#[inline]
+pub fn extract_text_from_element(el: &ElementRef) -> String {
+    el.text().collect::<String>().trim().to_string()
 }
 
 /// Extracts the value of a specific attribute (e.g., "href", "src") from the first matching element.
