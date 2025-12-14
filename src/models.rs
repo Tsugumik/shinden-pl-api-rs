@@ -82,7 +82,7 @@ pub struct AnimeDetails {
     pub place_and_time: Vec<String>,
     pub source_material: String,
 
-    pub episodes: Vec<Episode>
+    pub episodes_url: String
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
